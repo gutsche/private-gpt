@@ -1,0 +1,17 @@
+server:
+  env_name: ${APP_ENV:mock}
+
+# This configuration allows you to use GPU for creating embeddings while avoiding loading LLM into vRAM
+llm:
+  mode: mock
+
+embedding:
+  mode: huggingface
+  # ingest_mode: parallel
+  # count_workers: 4
+  ingest_mode: simple
+  count_workers: 1
+
+data:
+  local_ingestion: 
+    enabled: True
