@@ -102,6 +102,7 @@ args = parser.parse_args()
 
 # Set up logging to a file if a path is provided
 if args.log_file:
+    root_logger = logging.getLogger()
     file_handler = logging.FileHandler(args.log_file, mode="a")
     file_handler.setFormatter(
         logging.Formatter(
@@ -109,7 +110,8 @@ if args.log_file:
             datefmt="%Y-%m-%d %H:%M:%S",
         )
     )
-    logger.addHandler(file_handler)
+    root_logger.addHandler(file_handler)
+    root_logger.setLevel('INFO')
 
 if __name__ == "__main__":
 
