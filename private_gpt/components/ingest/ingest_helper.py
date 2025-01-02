@@ -92,7 +92,14 @@ class IngestionHelper:
             return string_reader.load_data([file_data.read_text()])
 
         logger.debug("Specific reader found for extension=%s", extension)
-        documents = reader_cls().load_data(file_data)
+        try:
+            documents = reader_cls().load_data(file_data)
+        except Exception:
+            logger.error("Reader for extension=%s produced an error, generating an empty Document for filename:%s",extension,file_data)
+            empty_doc = Document()
+            empty_doc.metadata = {"filename": file_name}
+            empty_doc.text = "Reader for extension={} produced an error, skipping filename={} generating an empty Document.".format(extension,file_name)
+            return [empty_doc]
 
         # Sanitize NUL bytes in text which can't be stored in Postgres
         for i in range(len(documents)):
