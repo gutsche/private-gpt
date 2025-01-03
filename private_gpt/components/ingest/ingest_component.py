@@ -129,6 +129,7 @@ class SimpleIngestComponent(BaseIngestComponentWithIndex):
     def bulk_ingest(self, files: list[tuple[str, Path]]) -> list[Document]:
         saved_documents = []
         for file_name, file_data in files:
+            logger.info("bulk_ingest file %s", file_data)
             documents = IngestionHelper.transform_file_into_documents(
                 file_name, file_data
             )

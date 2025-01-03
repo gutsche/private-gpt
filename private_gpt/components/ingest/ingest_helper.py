@@ -83,13 +83,22 @@ class IngestionHelper:
         extension = Path(file_name).suffix
         reader_cls = FILE_READER_CLS.get(extension)
         if reader_cls is None:
-            logger.debug(
-                "No reader found for extension=%s, using default string reader",
+            logger.info(
+                "No reader found for extension=%s for file=%s, using default string reader",
                 extension,
             )
             # Read as a plain text
             string_reader = StringIterableReader()
-            return string_reader.load_data([file_data.read_text()])
+            temp_docs = []
+            try:
+                temp_docs = string_reader.load_data([file_data.read_text()])
+            except Exception:
+                logger.error("String reader for extension=%s produced an error, generating an empty Document for filename:%s",extension,file_data)
+                empty_doc = Document()
+                empty_doc.metadata = {"filename": file_name}
+                empty_doc.text = "String reader for extension={} produced an error, skipping filename={} generating an empty Document.".format(extension,file_name)
+                temp_docs.append(empty_doc)
+            return temp_docs
 
         logger.debug("Specific reader found for extension=%s", extension)
         try:
